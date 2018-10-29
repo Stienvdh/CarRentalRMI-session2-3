@@ -1,5 +1,6 @@
 package session;
 
+import naming.INamingService;
 import rental.*;
 
 import java.util.Date;
