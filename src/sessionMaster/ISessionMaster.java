@@ -11,7 +11,7 @@ import java.util.List;
 public interface ISessionMaster extends Remote {
 
     List<Session> getActiveSessions() throws RemoteException;
-    IReservationSession getReservationSession(String sessionid) throws RemoteException;
+    IReservationSession getReservationSession(String sessionid, String clientName) throws RemoteException;
     IManagerSession getManagerSession(String sessionid) throws RemoteException;
     void terminateSession(String sessionid) throws RemoteException, IllegalArgumentException;
 

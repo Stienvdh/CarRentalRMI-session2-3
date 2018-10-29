@@ -6,6 +6,7 @@ import sessionMaster.ISessionMaster;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Client extends AbstractTestAgency<IReservationSession, IManagerSession> {
@@ -20,12 +21,12 @@ public class Client extends AbstractTestAgency<IReservationSession, IManagerSess
 
     @Override
     protected IReservationSession getNewReservationSession(String name) throws Exception {
-        return null;
+        return sessionMaster.getReservationSession("reservation_" + name, name);
     }
 
     @Override
     protected IManagerSession getNewManagerSession(String name, String carRentalName) throws Exception {
-        return null;
+        return sessionMaster.getManagerSession("manager_" + name);
     }
 
     @Override
@@ -38,21 +39,23 @@ public class Client extends AbstractTestAgency<IReservationSession, IManagerSess
 
     @Override
     protected void addQuoteToSession(IReservationSession iReservationSession, String name, Date start, Date end, String carType, String region) throws Exception {
-
+        ReservationConstraints constraints = new ReservationConstraints(start, end, carType, region);
+        iReservationSession.createQuote(constraints, name);
     }
 
     @Override
     protected List<Reservation> confirmQuotes(IReservationSession iReservationSession, String name) throws Exception {
-        return null;
+        return iReservationSession.confirmQuotes();
     }
 
     @Override
     protected int getNumberOfReservationsBy(IManagerSession ms, String clientName) throws Exception {
-        return 0;
+        return ms.getNumberReservationsBy(clientName);
     }
 
     @Override
     protected int getNumberOfReservationsForCarType(IManagerSession ms, String carRentalName, String carType) throws Exception {
-        return 0;
+        Map<String, Integer> carTypes = ms.getNbReservationCarType(carRentalName);
+        return carTypes.get(carType);
     }
 }
