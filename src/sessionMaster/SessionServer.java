@@ -10,13 +10,14 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class SessionServer {
 
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args) throws RemoteException, Exception {
         System.setSecurityManager(null);
 
-        ISessionMaster sessionMaster = new SessionMaster();
+        Registry registry = LocateRegistry.getRegistry();
+        INamingService namingService = (INamingService) registry.lookup("naming");
+        ISessionMaster sessionMaster = new SessionMaster(namingService);
         ISessionMaster stub =
                 (ISessionMaster) UnicastRemoteObject.exportObject(sessionMaster, 0);
-        Registry registry = LocateRegistry.getRegistry();
         registry.rebind("master", stub);
     }
 
