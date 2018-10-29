@@ -22,19 +22,19 @@ public class SessionMaster implements ISessionMaster {
         return this.activeSessions;
     }
 
-    @Override
     public IReservationSession getReservationSession(String sessionid, String clientName) throws RemoteException {
+        //TODO
         return null;
     }
 
-    @Override
     public IManagerSession getManagerSession(String sessionid) throws RemoteException {
+        //TODO
         return null;
     }
 
     @Override
     public void terminateSession(String sessionid) throws RemoteException, IllegalArgumentException {
-
+        //TODO
     }
 
 }
