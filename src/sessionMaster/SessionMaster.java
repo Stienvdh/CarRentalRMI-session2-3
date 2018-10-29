@@ -22,12 +22,11 @@ public class SessionMaster implements ISessionMaster {
         return this.activeSessions;
     }
 
-    public IReservationSession getReservationSession(String sessionid) throws RemoteException {
+    public IReservationSession getReservationSession(String sessionid, String clientName) throws RemoteException {
         //TODO
         return null;
     }
 
-    @Override
     public IManagerSession getManagerSession(String sessionid) throws RemoteException {
         //TODO
         return null;
