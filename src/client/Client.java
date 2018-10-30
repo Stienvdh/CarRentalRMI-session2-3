@@ -1,5 +1,6 @@
 package client;
 
+import naming.INamingService;
 import naming.NamingServer;
 import rental.*;
 import session.*;
@@ -27,6 +28,13 @@ public class Client extends AbstractTestManagement<IReservationSession, IManager
         ISessionMaster sessionMaster = (ISessionMaster) registry.lookup("master");
 
         Client client = new Client("trips", sessionMaster);
+
+        INamingService naming = (INamingService) registry.lookup("naming");
+        ICarRentalCompany crc1 = (ICarRentalCompany) registry.lookup("Hertz");
+        ICarRentalCompany crc2 = (ICarRentalCompany) registry.lookup("Dockx");
+        naming.registerCompany("Hertz", crc1);
+        naming.registerCompany("Dockx", crc2);
+        System.out.println("Companies have been registered.");
 
         client.run();
     }

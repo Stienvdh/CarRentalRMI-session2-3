@@ -1,5 +1,7 @@
 package rental;
 
+import naming.INamingService;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.util.StringTokenizer;
 
 public class RentalServer {
 	
-	public static void main(String[] args) throws ReservationException, NumberFormatException, IOException {
+	public static void main(String[] args) throws Exception, ReservationException, NumberFormatException, IOException {
 		CrcData data  = loadData("hertz.csv");
 		ICarRentalCompany crc = new CarRentalCompany(data.name, data.regions, data.cars);
 		System.setSecurityManager(null);

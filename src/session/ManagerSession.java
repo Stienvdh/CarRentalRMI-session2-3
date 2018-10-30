@@ -15,7 +15,7 @@ public class ManagerSession implements IManagerSession {
 
     private INamingService namingService;
     private String sessionid;
-    private String carRentalName;
+    public String carRentalName;
 
     public ManagerSession(INamingService namingService, String sessionid, String carRentalName) {
         this.sessionid = sessionid;
