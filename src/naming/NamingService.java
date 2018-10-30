@@ -14,8 +14,11 @@ public class NamingService implements INamingService {
         return this.companies;
     }
 
-    public ICarRentalCompany getCompany(String companyName) throws RemoteException{
-        return this.getAllCompanies().getOrDefault(companyName, null);
+    public ICarRentalCompany getCompany(String companyName) throws RemoteException, IllegalArgumentException {
+        if (! this.getAllCompanies().containsKey(companyName)) {
+            throw new IllegalArgumentException("Company " + companyName + " is not registered.");
+        }
+        return this.getAllCompanies().get(companyName);
     }
 
     public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {

@@ -11,8 +11,7 @@ public class NamingServer {
         System.setSecurityManager(null);
 
         INamingService namingService = new NamingService();
-        INamingService stub =
-                (INamingService) UnicastRemoteObject.exportObject(namingService, 0);
+        INamingService stub = (INamingService) UnicastRemoteObject.exportObject(namingService, 0);
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind("naming", stub);
     }
