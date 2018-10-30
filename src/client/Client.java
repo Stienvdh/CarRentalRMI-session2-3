@@ -1,5 +1,6 @@
 package client;
 
+import naming.INamingService;
 import naming.NamingServer;
 import rental.*;
 import session.*;
@@ -8,10 +9,7 @@ import sessionMaster.SessionServer;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Client extends AbstractTestManagement<IReservationSession, IManagerSession> {
 
@@ -27,6 +25,13 @@ public class Client extends AbstractTestManagement<IReservationSession, IManager
         ISessionMaster sessionMaster = (ISessionMaster) registry.lookup("master");
 
         Client client = new Client("trips", sessionMaster);
+
+        INamingService naming = (INamingService) registry.lookup("naming");
+        ICarRentalCompany crc1 = (ICarRentalCompany) registry.lookup("Hertz");
+        ICarRentalCompany crc2 = (ICarRentalCompany) registry.lookup("Dockx");
+        naming.registerCompany("Hertz", crc1);
+        naming.registerCompany("Dockx", crc2);
+        System.out.println("Companies have been registered.");
 
         client.run();
     }
@@ -72,14 +77,13 @@ public class Client extends AbstractTestManagement<IReservationSession, IManager
 
     @Override
     protected int getNumberOfReservationsForCarType(IManagerSession session, String carRentalName, String carType) throws Exception {
-        Map<String, Integer> carTypes = session.getNbReservationCarType(carRentalName);
-        return carTypes.get(carType);
+        return session.getNbReservationCarType(carRentalName, carType);
     }
 
 
     @Override
     protected Set<String> getBestClients(IManagerSession ms) throws Exception {
-        return ms.getBestRenter(ms.getCarRentalName());
+        return ms.getBestRenters();
     }
 
     @Override

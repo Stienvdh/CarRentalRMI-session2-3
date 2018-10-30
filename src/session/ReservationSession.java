@@ -24,7 +24,7 @@ public class ReservationSession extends Session implements IReservationSession {
     @Override
     public Quote createQuote(ReservationConstraints constraints, String clientName) throws ReservationException, RemoteException {
         INamingService namingService = this.getNamingService();
-        Collection<String> companies = namingService.getAllCompanies().keySet();
+        Collection<String> companies = namingService.getAllCompanyNames();
 
         for (String str: companies) {
             ICarRentalCompany company = namingService.getCompany(str);
@@ -33,7 +33,7 @@ public class ReservationSession extends Session implements IReservationSession {
                 currentQuotes.add(quote);
                 return quote;
             }
-            catch (ReservationException ex) {
+            catch (Exception ex) {
             }
         }
         rollback();
@@ -72,8 +72,8 @@ public class ReservationSession extends Session implements IReservationSession {
     @Override
     public Set<CarType> getAvailableCarTypes(Date start, Date end) throws RemoteException {
         Set<CarType> available = new HashSet<CarType>();
-        Map<String, ICarRentalCompany> companies = getNamingService().getAllCompanies();
-        for (String company : companies.keySet()) {
+        List<String> companies = getNamingService().getAllCompanyNames();
+        for (String company : companies) {
             for (Car car : getNamingService().getCompany(company).getAllCars()) {
                 if (car.isAvailable(start, end)) {
                     available.add(car.getType());
