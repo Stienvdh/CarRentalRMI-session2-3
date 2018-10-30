@@ -1,6 +1,7 @@
 package session;
 
 import naming.INamingService;
+import naming.NamingServer;
 import rental.*;
 
 import java.rmi.Remote;
@@ -10,10 +11,18 @@ import java.util.*;
 public class ManagerSession implements IManagerSession {
 
     private INamingService namingService;
+    private String sessionid;
+
+    public ManagerSession(INamingService namingService, String sessionid) {
+        this.sessionid = sessionid;
+        this.namingService = namingService;
+    }
 
     private INamingService getNamingService() {
         return this.namingService;
     }
+
+    private String getSessionid() {return this.sessionid;}
 
     public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {
         this.getNamingService().registerCompany(companyName, company);
