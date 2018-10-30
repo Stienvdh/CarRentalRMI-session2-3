@@ -24,23 +24,28 @@ public class ManagerSession implements IManagerSession {
 
     private String getSessionid() {return this.sessionid;}
 
+    @Override
     public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {
         this.getNamingService().registerCompany(companyName, company);
     }
 
+    @Override
     public void unregisterCompany(String companyName) throws RemoteException {
         this.getNamingService().unregisterCompany(companyName);
     }
 
+    @Override
     public Map<String, ICarRentalCompany> getAllRegisteredCompanies() throws RemoteException {
         return this.getNamingService().getAllCompanies();
     }
 
+    @Override
     public List<CarType> getCarTypes(String rentalCompany) throws RemoteException {
         ICarRentalCompany company = this.getNamingService().getCompany(rentalCompany);
         return new ArrayList<CarType>(company.getAllCarTypes());
     }
 
+    @Override
     public String getBestRenter(String rentalCompany) throws RemoteException {
         Map<String, Integer> result = new HashMap<String, Integer>();
         ICarRentalCompany company = this.getNamingService().getCompany(rentalCompany);
@@ -58,6 +63,7 @@ public class ManagerSession implements IManagerSession {
         return null;
     }
 
+    @Override
     public Map<String,Integer> getNbReservationCarType(String carRentalCompany) throws RemoteException {
         Map<String, Integer> result = new HashMap<String,Integer>();
         ICarRentalCompany company = this.getNamingService().getCompany(carRentalCompany);
@@ -73,6 +79,7 @@ public class ManagerSession implements IManagerSession {
         return result;
     }
 
+    @Override
     public int getNumberReservationsBy(String clientName) throws RemoteException {
         int counter = 0;
         Map<String, ICarRentalCompany> rentals = this.getNamingService().getAllCompanies();

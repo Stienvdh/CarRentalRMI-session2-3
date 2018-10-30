@@ -22,22 +22,31 @@ public class ReservationSession extends Session implements IReservationSession {
     }
 
     @Override
-    public Quote createQuote(ReservationConstraints constraints, String companyName) throws ReservationException, RemoteException {
+    public Quote createQuote(ReservationConstraints constraints, String clientName) throws ReservationException, RemoteException {
         INamingService namingService = this.getNamingService();
-        ICarRentalCompany carRentalCompany = namingService.getCompany(companyName);
-        try {
-            Quote quote = carRentalCompany.createQuote(constraints, this.getClientName());
-            currentQuotes.add(quote);
-            return quote;
-        }
-        catch (ReservationException ex) {
+        Collection<String> companies = namingService.getAllCompanies().keySet();
 
+        for (String str: companies) {
+            ICarRentalCompany company = namingService.getCompany(str);
+            try {
+                Quote quote = company.createQuote(constraints, this.getClientName());
+                currentQuotes.add(quote);
+                return quote;
+            }
+            catch (ReservationException ex) {
+            }
         }
-        throw new ReservationException("No car for given constraints available.");
+        rollback();
+        return null;
+    }
+
+    private void rollback() throws RemoteException {
+        getCurrentQuotes().clear();
+        System.out.println("Reservation failed, all current quotes are undone.");
     }
 
     @Override
-    public List<Quote> getCurrentQuotes(){
+    public List<Quote> getCurrentQuotes() throws RemoteException {
         return this.currentQuotes;
     }
 
