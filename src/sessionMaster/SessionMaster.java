@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class SessionMaster implements ISessionMaster {
 
-    private Map<String, Session> activeSessions = new HashMap<String,Session>();
+    private Map<String, Object> activeSessions = new HashMap<String,Object>();
     private INamingService namingService;
 
     private INamingService getNamingService() {return this.namingService; }
@@ -21,7 +21,7 @@ public class SessionMaster implements ISessionMaster {
         this.namingService = namingService;
     }
 
-    public Map<String, Session> getActiveSessions() {
+    public Map<String, Object> getActiveSessions() {
         return this.activeSessions;
     }
 
@@ -34,6 +34,7 @@ public class SessionMaster implements ISessionMaster {
         IReservationSession stub =
                 (IReservationSession) UnicastRemoteObject.exportObject(session, 0);
         registry.rebind(sessionid, stub);
+        this.getActiveSessions().put(sessionid,session);
         return stub;
     }
 
@@ -46,6 +47,7 @@ public class SessionMaster implements ISessionMaster {
         IManagerSession stub =
                 (IManagerSession) UnicastRemoteObject.exportObject(session, 0);
         registry.rebind(sessionid, stub);
+        this.getActiveSessions().put(sessionid,session);
         return stub;
     }
 
