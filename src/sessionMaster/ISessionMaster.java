@@ -11,7 +11,7 @@ public interface ISessionMaster extends Remote {
 
     Map<String, Object> getActiveSessions() throws RemoteException;
     IReservationSession getReservationSession(String sessionid, String clientName) throws RemoteException;
-    IManagerSession getManagerSession(String sessionid) throws RemoteException;
+    IManagerSession getManagerSession(String sessionid, String carRentalName) throws RemoteException;
     void terminateSession(String sessionid) throws RemoteException, IllegalArgumentException;
 
 }

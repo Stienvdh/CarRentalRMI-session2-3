@@ -38,12 +38,12 @@ public class SessionMaster implements ISessionMaster {
         return stub;
     }
 
-    public IManagerSession getManagerSession(String sessionid) throws RemoteException {
+    public IManagerSession getManagerSession(String sessionid, String carRentalName) throws RemoteException {
         if (this.getActiveSessions().containsKey(sessionid)) {
             return (IManagerSession) this.getActiveSessions().get(sessionid);
         }
         Registry registry = LocateRegistry.getRegistry();
-        IManagerSession session = new ManagerSession(this.getNamingService(), sessionid);
+        IManagerSession session = new ManagerSession(this.getNamingService(), sessionid, carRentalName);
         IManagerSession stub =
                 (IManagerSession) UnicastRemoteObject.exportObject(session, 0);
         registry.rebind(sessionid, stub);

@@ -15,16 +15,18 @@ public class ManagerSession implements IManagerSession {
 
     private INamingService namingService;
     private String sessionid;
+    private String carRentalName;
 
-    public ManagerSession(INamingService namingService, String sessionid) {
+    public ManagerSession(INamingService namingService, String sessionid, String carRentalName) {
         this.sessionid = sessionid;
         this.namingService = namingService;
+        this.carRentalName = carRentalName;
     }
 
     private INamingService getNamingService() {
         return this.namingService;
     }
-
+    private String getCarRentalName() {return this.carRentalName;}
     private String getSessionid() {return this.sessionid;}
 
     @Override
