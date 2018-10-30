@@ -79,16 +79,16 @@ public class Client extends AbstractTestManagement<IReservationSession, IManager
 
     @Override
     protected Set<String> getBestClients(IManagerSession ms) throws Exception {
-        return null;
+        return ms.getBestRenter(ms.getCarRentalName());
     }
 
     @Override
     protected String getCheapestCarType(IReservationSession iReservationSession, Date start, Date end, String region) throws Exception {
-        return null;
+        return iReservationSession.getCheapestCarType(start,end).toString();
     }
 
     @Override
     protected CarType getMostPopularCarTypeIn(IManagerSession ms, String carRentalCompanyName, int year) throws Exception {
-        return null;
+        return ms.getMostPopularCarType(carRentalCompanyName,year);
     }
 }

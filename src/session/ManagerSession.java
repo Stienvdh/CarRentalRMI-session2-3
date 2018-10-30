@@ -1,11 +1,8 @@
 package session;
 
 import naming.INamingService;
-import naming.NamingServer;
 import rental.*;
 
-import javax.print.DocFlavor;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,8 +23,11 @@ public class ManagerSession implements IManagerSession {
     private INamingService getNamingService() {
         return this.namingService;
     }
-    private String getCarRentalName() {return this.carRentalName;}
+
+    @Override
+    public String getCarRentalName() {return this.carRentalName;}
     private String getSessionid() {return this.sessionid;}
+
 
     @Override
     public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {
@@ -51,7 +51,7 @@ public class ManagerSession implements IManagerSession {
     }
 
     @Override
-    public String getBestRenter(String rentalCompany) throws RemoteException {
+    public Set<String> getBestRenter(String rentalCompany) throws RemoteException {
         Map<String, Integer> result = new HashMap<String, Integer>();
         ICarRentalCompany company = this.getNamingService().getCompany(rentalCompany);
         for (Car car: company.getAllCars()) {
@@ -59,13 +59,14 @@ public class ManagerSession implements IManagerSession {
                 result.put(res.getCarRenter(),company.getReservationsBy(res.getCarRenter()).size());
             }
         }
+        Set<String> bestRenters = new HashSet<String>();
         Integer max = Collections.max(result.values());
         for (String renter: result.keySet()) {
             if (result.get(renter).equals(max)) {
-                return renter;
+                bestRenters.add(renter);
             }
         }
-        return null;
+        return bestRenters;
     }
 
     @Override
