@@ -1,11 +1,8 @@
 package session;
 
 import naming.INamingService;
-import naming.NamingServer;
 import rental.*;
 
-import javax.print.DocFlavor;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,8 +23,11 @@ public class ManagerSession implements IManagerSession {
     private INamingService getNamingService() {
         return this.namingService;
     }
-    private String getCarRentalName() {return this.carRentalName;}
+
+    @Override
+    public String getCarRentalName() throws RemoteException {return this.carRentalName;}
     private String getSessionid() {return this.sessionid;}
+
 
     @Override
     public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {
@@ -40,7 +40,7 @@ public class ManagerSession implements IManagerSession {
     }
 
     @Override
-    public Map<String, ICarRentalCompany> getAllRegisteredCompanies() throws RemoteException {
+    public List<ICarRentalCompany> getAllRegisteredCompanies() throws RemoteException {
         return this.getNamingService().getAllCompanies();
     }
 
@@ -51,44 +51,54 @@ public class ManagerSession implements IManagerSession {
     }
 
     @Override
-    public String getBestRenter(String rentalCompany) throws RemoteException {
+    public Set<String> getBestRenters() throws RemoteException {
         Map<String, Integer> result = new HashMap<String, Integer>();
-        ICarRentalCompany company = this.getNamingService().getCompany(rentalCompany);
-        for (Car car: company.getAllCars()) {
-            for (Reservation res: car.getReservations()) {
-                result.put(res.getCarRenter(),company.getReservationsBy(res.getCarRenter()).size());
+
+        for (ICarRentalCompany crc : getNamingService().getAllCompanies()) {
+            for (Car car : crc.getAllCars()) {
+                for (Reservation res : car.getReservations()) {
+                    result.put(res.getCarRenter(),0);
+                }
             }
         }
+
+        for (String renter : result.keySet()) {
+            for (ICarRentalCompany crc : getNamingService().getAllCompanies()) {
+                int old = result.get(renter);
+                result.put(renter, old + crc.getReservationsBy(renter).size());
+            }
+        }
+
+        Set<String> bestRenters = new HashSet<String>();
         Integer max = Collections.max(result.values());
         for (String renter: result.keySet()) {
             if (result.get(renter).equals(max)) {
-                return renter;
+                bestRenters.add(renter);
             }
         }
-        return null;
+        return bestRenters;
     }
 
     @Override
-    public Map<String,Integer> getNbReservationCarType(String carRentalCompany) throws RemoteException {
+    public int getNbReservationCarType(String carRentalCompany, String carTypeName) throws RemoteException {
         Map<String, Integer> result = new HashMap<String,Integer>();
         ICarRentalCompany company = this.getNamingService().getCompany(carRentalCompany);
-        for (CarType carType : getCarTypes(carRentalCompany)) {
-            result.put(carType.getName(), 0);
-        }
+        int value = 0;
         for (Car car : company.getAllCars()) {
             for (Reservation res : car.getReservations()){
-                int value = result.get(car.getType().getName());
-                result.put(car.getType().getName(), value+1);
+                if (car.getType().getName().equals(carTypeName)) {
+                    value += 1;
+                }
             }
         }
-        return result;
+        return value;
     }
 
     @Override
     public int getNumberReservationsBy(String clientName) throws RemoteException {
         int counter = 0;
-        Map<String, ICarRentalCompany> rentals = this.getNamingService().getAllCompanies();
-        for (ICarRentalCompany crc: rentals.values()) {
+        List<ICarRentalCompany> rentals = this.getNamingService().getAllCompanies();
+        for (ICarRentalCompany crc: rentals) {
             counter += crc.getReservationsBy(clientName).size();
         }
         return counter;

@@ -58,8 +58,8 @@ public class CarRentalCompany implements ICarRentalCompany {
 	 * CAR TYPES *
 	 *************/
 
-	public Collection<CarType> getAllCarTypes() {
-		return carTypes.values();
+	public List<CarType> getAllCarTypes() {
+		return new ArrayList<CarType>(carTypes.values());
 	}
 	
 	public CarType getCarType(String carTypeName) {
