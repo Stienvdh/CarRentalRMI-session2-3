@@ -1,10 +1,8 @@
 package client;
 
-import naming.NamingServer;
 import rental.*;
 import session.*;
 import sessionMaster.ISessionMaster;
-import sessionMaster.SessionServer;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,21 +13,28 @@ import java.util.Set;
 
 public class Client extends AbstractTestAgency<IReservationSession, IManagerSession> {
 
-    private ISessionMaster sessionMaster;
-
     public static void main(String[] args) throws Exception {
-        System.setSecurityManager(null);
-
-        NamingServer.main(args);
-        SessionServer.main(args);
-
-        Registry registry = LocateRegistry.getRegistry("localhost");
-        ISessionMaster sessionMaster = (ISessionMaster) registry.lookup("master");
-
+        ISessionMaster sessionMaster = clientSetup("localhost", "master");
         Client client = new Client("simpleTrips", sessionMaster);
+
+        RentalServer.main(args);
 
         client.run();
     }
+    public static ISessionMaster clientSetup(String host, String masterName) {
+        System.setSecurityManager(null);
+        try {
+            Registry registry = LocateRegistry.getRegistry(host);
+            ISessionMaster sessionMaster = (ISessionMaster) registry.lookup(masterName);
+            return sessionMaster;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    ISessionMaster sessionMaster;
 
     public Client(String scriptFile, ISessionMaster sessionMaster) {
         super(scriptFile);
@@ -38,41 +43,41 @@ public class Client extends AbstractTestAgency<IReservationSession, IManagerSess
 
     @Override
     protected IReservationSession getNewReservationSession(String name) throws Exception {
-        return sessionMaster.getReservationSession("RESERVATION_" + name, name);
+        return sessionMaster.getReservationSession("reservation_" + name, name);
     }
 
     @Override
     protected IManagerSession getNewManagerSession(String name, String carRentalName) throws Exception {
-        return sessionMaster.getManagerSession("MANAGER_" + name + "_" + carRentalName);
+        return sessionMaster.getManagerSession("manager_" + name);
     }
 
     @Override
-    protected void checkForAvailableCarTypes(IReservationSession session, Date start, Date end) throws Exception {
-        Set<CarType> result = session.getAvailableCarTypes(start,end);
+    protected void checkForAvailableCarTypes(IReservationSession iReservationSession, Date start, Date end) throws Exception {
+        Set<CarType> result = iReservationSession.getAvailableCarTypes(start,end);
         for (CarType carType : result) {
             System.out.println(carType.toString());
         }
     }
 
     @Override
-    protected void addQuoteToSession(IReservationSession session, String name, Date start, Date end, String carType, String region) throws Exception {
+    protected void addQuoteToSession(IReservationSession iReservationSession, String name, Date start, Date end, String carType, String region) throws Exception {
         ReservationConstraints constraints = new ReservationConstraints(start, end, carType, region);
-        session.createQuote(constraints, name);
+        iReservationSession.createQuote(constraints, name);
     }
 
     @Override
-    protected List<Reservation> confirmQuotes(IReservationSession session, String name) throws Exception {
-        return session.confirmQuotes();
+    protected List<Reservation> confirmQuotes(IReservationSession iReservationSession, String name) throws Exception {
+        return iReservationSession.confirmQuotes();
     }
 
     @Override
-    protected int getNumberOfReservationsBy(IManagerSession session, String clientName) throws Exception {
-        return session.getNumberReservationsBy(clientName);
+    protected int getNumberOfReservationsBy(IManagerSession ms, String clientName) throws Exception {
+        return ms.getNumberReservationsBy(clientName);
     }
 
     @Override
-    protected int getNumberOfReservationsForCarType(IManagerSession session, String carRentalName, String carType) throws Exception {
-        Map<String, Integer> carTypes = session.getNbReservationCarType(carRentalName);
+    protected int getNumberOfReservationsForCarType(IManagerSession ms, String carRentalName, String carType) throws Exception {
+        Map<String, Integer> carTypes = ms.getNbReservationCarType(carRentalName);
         return carTypes.get(carType);
     }
 }
