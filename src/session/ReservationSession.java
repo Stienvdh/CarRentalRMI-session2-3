@@ -66,6 +66,7 @@ public class ReservationSession extends Session implements IReservationSession {
                 throw new ReservationException("Cannot confirm all reservations");
             }
         }
+        this.currentQuotes = new ArrayList<Quote>();
         return confirmedReservations;
     }
 
