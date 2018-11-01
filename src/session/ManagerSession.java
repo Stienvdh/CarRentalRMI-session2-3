@@ -86,7 +86,11 @@ public class ManagerSession implements IManagerSession {
         int value = 0;
         for (Car car : company.getAllCars()) {
             for (Reservation res : car.getReservations()){
+
                 if (car.getType().getName().equals(carTypeName)) {
+                    if (res.getCarType().equals("SUV")) {
+                        System.out.println("SUV GEVONDEN in " + carRentalCompany);
+                    }
                     value += 1;
                 }
             }

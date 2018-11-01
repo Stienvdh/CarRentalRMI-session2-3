@@ -88,7 +88,7 @@ public class Client extends AbstractTestManagement<IReservationSession, IManager
 
     @Override
     protected String getCheapestCarType(IReservationSession iReservationSession, Date start, Date end, String region) throws Exception {
-        return iReservationSession.getCheapestCarType(start,end).toString();
+        return iReservationSession.getCheapestCarType(start,end,region).getName();
     }
 
     @Override

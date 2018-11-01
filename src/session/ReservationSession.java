@@ -25,7 +25,6 @@ public class ReservationSession extends Session implements IReservationSession {
     public Quote createQuote(ReservationConstraints constraints, String clientName) throws ReservationException, RemoteException {
         INamingService namingService = this.getNamingService();
         Collection<String> companies = namingService.getAllCompanyNames();
-
         for (String str: companies) {
             ICarRentalCompany company = namingService.getCompany(str);
             try {
@@ -57,12 +56,14 @@ public class ReservationSession extends Session implements IReservationSession {
             String companyName = quote.getRentalCompany();
             ICarRentalCompany company = this.getNamingService().getCompany(companyName);
             try {
-                company.confirmQuote(quote);
+                Reservation res = company.confirmQuote(quote);
+                confirmedReservations.add(res);
             }
             catch (ReservationException ex) {
                 for (Reservation res : confirmedReservations) {
                     company.cancelReservation(res);
                 }
+                this.currentQuotes = new ArrayList<Quote>();
                 throw new ReservationException("Cannot confirm all reservations");
             }
         }
@@ -85,11 +86,18 @@ public class ReservationSession extends Session implements IReservationSession {
     }
 
     @Override
-    public CarType getCheapestCarType(Date start, Date end) throws RemoteException {
-        Set<CarType> available = getAvailableCarTypes(start,end);
+    public CarType getCheapestCarType(Date start, Date end, String region) throws RemoteException {
+        List<CarType> types = new ArrayList<CarType>();
+        List<ICarRentalCompany> companies = this.getNamingService().getAllCompanies();
+        for (ICarRentalCompany comp : companies) {
+            if (comp.getRegions().contains(region)) {
+                types.addAll(comp.getAvailableCarTypes(start,end));
+            }
+        }
+
         CarType cheapestType = null;
         double cheapest = Double.POSITIVE_INFINITY;
-        for (CarType carType : available) {
+        for (CarType carType : types) {
             double price = carType.getRentalPricePerDay();
             if (price < cheapest) {
                 cheapest = price;

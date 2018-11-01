@@ -131,7 +131,7 @@ public class CarRentalCompany implements ICarRentalCompany {
 		CarType type = getCarType(constraints.getCarType());
 		
 		double price = calculateRentalPrice(type.getRentalPricePerDay(),constraints.getStartDate(), constraints.getEndDate());
-		
+
 		return new Quote(client, constraints.getStartDate(), constraints.getEndDate(), getName(), constraints.getCarType(), price);
 	}
 
@@ -150,6 +150,7 @@ public class CarRentalCompany implements ICarRentalCompany {
 		Car car = availableCars.get((int)(Math.random()*availableCars.size()));
 		
 		Reservation res = new Reservation(quote, car.getId());
+
 		car.addReservation(res);
 		return res;
 	}
