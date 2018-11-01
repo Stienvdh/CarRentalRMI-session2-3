@@ -35,11 +35,11 @@ public class NamingService implements INamingService {
         return this.companies.get(companyName);
     }
 
-    public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {
+    synchronized public void registerCompany(String companyName, ICarRentalCompany company) throws RemoteException {
         this.companies.put(companyName, company);
     }
 
-    public void unregisterCompany(String companyName) throws RemoteException, IllegalArgumentException {
+    synchronized public void unregisterCompany(String companyName) throws RemoteException, IllegalArgumentException {
         if (! this.getAllCompanyNames().contains(companyName)) {
             throw new IllegalArgumentException("Company" + companyName + "is not registered.");
         }

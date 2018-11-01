@@ -141,7 +141,7 @@ public class CarRentalCompany implements ICarRentalCompany {
 						/ (1000 * 60 * 60 * 24D));
 	}
 
-	public Reservation confirmQuote(Quote quote) throws ReservationException {
+	synchronized public Reservation confirmQuote(Quote quote) throws ReservationException {
 		logger.log(Level.INFO, "<{0}> Reservation of {1}", new Object[]{name, quote.toString()});
 		List<Car> availableCars = getAvailableCars(quote.getCarType(), quote.getStartDate(), quote.getEndDate());
 		if(availableCars.isEmpty())
@@ -155,7 +155,7 @@ public class CarRentalCompany implements ICarRentalCompany {
 		return res;
 	}
 
-	public void cancelReservation(Reservation res) {
+	synchronized public void cancelReservation(Reservation res) {
 		logger.log(Level.INFO, "<{0}> Cancelling reservation {1}", new Object[]{name, res.toString()});
 		getCar(res.getCarId()).removeReservation(res);
 	}

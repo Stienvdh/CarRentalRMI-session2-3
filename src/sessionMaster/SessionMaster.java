@@ -25,7 +25,7 @@ public class SessionMaster implements ISessionMaster {
         return this.activeSessions;
     }
 
-    public IReservationSession getReservationSession(String sessionid, String clientName) throws RemoteException {
+    synchronized public IReservationSession getReservationSession(String sessionid, String clientName) throws RemoteException {
         if (this.getActiveSessions().containsKey(sessionid)) {
             return (IReservationSession) this.getActiveSessions().get(sessionid);
         }
@@ -38,7 +38,7 @@ public class SessionMaster implements ISessionMaster {
         return stub;
     }
 
-    public IManagerSession getManagerSession(String sessionid, String carRentalName) throws RemoteException {
+    synchronized public IManagerSession getManagerSession(String sessionid, String carRentalName) throws RemoteException {
         if (this.getActiveSessions().containsKey(sessionid)) {
             return (IManagerSession) this.getActiveSessions().get(sessionid);
         }
@@ -51,7 +51,7 @@ public class SessionMaster implements ISessionMaster {
         return stub;
     }
 
-    public void terminateSession(String sessionid) throws RemoteException, IllegalArgumentException {
+    synchronized public void terminateSession(String sessionid) throws RemoteException, IllegalArgumentException {
         if (! this.getActiveSessions().containsKey(sessionid)) {
             throw new IllegalArgumentException("Session" + sessionid + "does not exist.");
         }
